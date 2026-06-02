@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.sergionietolabian.springbootapi.dto.TaskPatchRequestDTO;
 import com.sergionietolabian.springbootapi.dto.TaskRequestDTO;
 import com.sergionietolabian.springbootapi.dto.TaskResponseDTO;
 import com.sergionietolabian.springbootapi.dto.TaskUpdateRequestDTO;
@@ -84,5 +85,33 @@ public class TaskService {
                 .orElseThrow(() -> new RuntimeException("Task not found with id " + id));
 
         taskRepository.delete(task);
+    }
+    
+    public TaskResponseDTO patchTask(Long id, TaskPatchRequestDTO dto) {
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Task not found with id " + id));
+
+        if (dto.getTitle() != null) {
+            task.setTitle(dto.getTitle());
+        }
+
+        if (dto.getDescription() != null) {
+            task.setDescription(dto.getDescription());
+        }
+
+        if (dto.getStatus() != null) {
+            task.setStatus(dto.getStatus());
+        }
+
+        Task updated = taskRepository.save(task);
+
+        TaskResponseDTO response = new TaskResponseDTO();
+        response.setId(updated.getId());
+        response.setTitle(updated.getTitle());
+        response.setDescription(updated.getDescription());
+        response.setStatus(updated.getStatus());
+
+        return response;
     }
 }
