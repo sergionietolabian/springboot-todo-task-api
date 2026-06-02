@@ -2,7 +2,6 @@ package com.sergionietolabian.springbootapi.controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sergionietolabian.springbootapi.dto.TaskRequestDTO;
+import com.sergionietolabian.springbootapi.dto.TaskResponseDTO;
 import com.sergionietolabian.springbootapi.entity.Task;
 import com.sergionietolabian.springbootapi.enums.TaskStatus;
 import com.sergionietolabian.springbootapi.service.TaskService;
@@ -32,7 +33,7 @@ public class TaskController {
     }
     
     @GetMapping("/tasks/{id}")
-    public Task getTaskById(@PathVariable Long id) {
+    public TaskResponseDTO getTaskById(@PathVariable Long id) {
         return taskService.getTaskById(id);
     }
     
@@ -49,10 +50,8 @@ public class TaskController {
     }
     
     @PostMapping("/tasks")
-    public ResponseEntity<Task> createTask(@RequestBody Task task) {
-        Task createdTask = taskService.createTask(task);
-        return ResponseEntity.status(HttpStatus.CREATED)
-        		.body(createdTask);
+    public TaskResponseDTO createTask(@RequestBody TaskRequestDTO dto) {
+        return taskService.createTask(dto);
     }
     
     @PutMapping("/tasks/{id}")
