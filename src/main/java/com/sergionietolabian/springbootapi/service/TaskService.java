@@ -1,6 +1,8 @@
 package com.sergionietolabian.springbootapi.service;
 
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -22,41 +24,42 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    public List<TaskResponseDTO> getAllTasks() {
+        return taskRepository.findAll()
+                .stream()
+                .map(TaskMapper::toResponse)
+                .collect(Collectors.toList());
     }
     
     public TaskResponseDTO getTaskById(Long id) {
 
         Task task = taskRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Task not found"));
+                .orElseThrow(() -> new RuntimeException("Task not found"));
 
-        TaskResponseDTO response = new TaskResponseDTO();
-
-        response.setId(task.getId());
-        response.setTitle(task.getTitle());
-        response.setDescription(task.getDescription());
-        response.setStatus(task.getStatus());
-
-        return response;
+        return TaskMapper.toResponse(task);
     }
     
-    public List<Task> getTasksByStatus(TaskStatus status) {
-        return taskRepository.findByStatus(status);
+    public List<TaskResponseDTO> getTasksByStatus(TaskStatus status) {
+        return taskRepository.findByStatus(status)
+                .stream()
+                .map(TaskMapper::toResponse)
+                .collect(Collectors.toList());
     }
     
-    public List<Task> getTasksByStatusAndTitle(TaskStatus status, String title) {
-        return taskRepository.findByStatusAndTitleContaining(status, title);
+    public List<TaskResponseDTO> getTasksByStatusAndTitle(TaskStatus status, String title) {
+        return taskRepository.findByStatusAndTitleContaining(status, title)
+                .stream()
+                .map(TaskMapper::toResponse)
+                .collect(Collectors.toList());
     }
     
     public TaskResponseDTO createTask(TaskRequestDTO dto) {
 
         Task task = TaskMapper.toEntity(dto);
 
-        Task savedTask = taskRepository.save(task);
+        Task saved = taskRepository.save(task);
 
-        return TaskMapper.toResponse(savedTask);
+        return TaskMapper.toResponse(saved);
     }
     
     public TaskResponseDTO updateTask(Long id, TaskUpdateRequestDTO dto) {
@@ -70,13 +73,7 @@ public class TaskService {
 
         Task updated = taskRepository.save(task);
 
-        TaskResponseDTO response = new TaskResponseDTO();
-        response.setId(updated.getId());
-        response.setTitle(updated.getTitle());
-        response.setDescription(updated.getDescription());
-        response.setStatus(updated.getStatus());
-
-        return response;
+        return TaskMapper.toResponse(updated);
     }
     
     public void deleteTask(Long id) {
@@ -106,12 +103,6 @@ public class TaskService {
 
         Task updated = taskRepository.save(task);
 
-        TaskResponseDTO response = new TaskResponseDTO();
-        response.setId(updated.getId());
-        response.setTitle(updated.getTitle());
-        response.setDescription(updated.getDescription());
-        response.setStatus(updated.getStatus());
-
-        return response;
+        return TaskMapper.toResponse(updated);
     }
 }
