@@ -1,27 +1,35 @@
 package com.sergionietolabian.springbootapi.exception;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.sergionietolabian.springbootapi.dto.ValidationErrorResponse;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationErrors(
+    public ResponseEntity<ValidationErrorResponse> handleValidationErrors(
             MethodArgumentNotValidException ex) {
 
-        Map<String, String> errors = new HashMap<>();
+        List<ValidationErrorResponse.FieldError> errors =
+                ex.getBindingResult()
+                        .getFieldErrors()
+                        .stream()
+                        .map(error -> new ValidationErrorResponse.FieldError(
+                                error.getField(),
+                                error.getDefaultMessage()
+                        ))
+                        .collect(Collectors.toList());
 
-        ex.getBindingResult()
-          .getFieldErrors()
-          .forEach(error ->
-              errors.put(error.getField(), error.getDefaultMessage()));
+        ValidationErrorResponse response =
+                new ValidationErrorResponse(400, errors);
 
-        return ResponseEntity.badRequest().body(errors);
+        return ResponseEntity.badRequest().body(response);
     }
 }
