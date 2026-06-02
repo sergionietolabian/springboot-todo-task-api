@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sergionietolabian.springbootapi.dto.TaskRequestDTO;
 import com.sergionietolabian.springbootapi.dto.TaskResponseDTO;
+import com.sergionietolabian.springbootapi.dto.TaskUpdateRequestDTO;
 import com.sergionietolabian.springbootapi.entity.Task;
 import com.sergionietolabian.springbootapi.enums.TaskStatus;
 import com.sergionietolabian.springbootapi.service.TaskService;
@@ -59,11 +60,11 @@ public class TaskController {
     }
     
     @PutMapping("/tasks/{id}")
-    public Task updateTask(
+    public TaskResponseDTO updateTask(
             @PathVariable Long id,
-            @RequestBody Task task) {
+            @Valid @RequestBody TaskUpdateRequestDTO dto) {
 
-        return taskService.updateTask(id, task);
+        return taskService.updateTask(id, dto);
     }
     
     @DeleteMapping("/tasks/{id}")

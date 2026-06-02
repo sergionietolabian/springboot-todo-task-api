@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.sergionietolabian.springbootapi.dto.TaskRequestDTO;
 import com.sergionietolabian.springbootapi.dto.TaskResponseDTO;
+import com.sergionietolabian.springbootapi.dto.TaskUpdateRequestDTO;
 import com.sergionietolabian.springbootapi.entity.Task;
 import com.sergionietolabian.springbootapi.enums.TaskStatus;
 import com.sergionietolabian.springbootapi.mapper.TaskMapper;
@@ -57,24 +58,24 @@ public class TaskService {
         return TaskMapper.toResponse(savedTask);
     }
     
-    public Task updateTask(Long id, Task updatedTask) {
+    public TaskResponseDTO updateTask(Long id, TaskUpdateRequestDTO dto) {
 
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found with id " + id));
 
-        if (updatedTask.getTitle() != null) {
-            task.setTitle(updatedTask.getTitle());
-        }
+        task.setTitle(dto.getTitle());
+        task.setDescription(dto.getDescription());
+        task.setStatus(dto.getStatus());
 
-        if (updatedTask.getDescription() != null) {
-            task.setDescription(updatedTask.getDescription());
-        }
+        Task updated = taskRepository.save(task);
 
-        if (updatedTask.getStatus() != null) {
-            task.setStatus(updatedTask.getStatus());
-        }
+        TaskResponseDTO response = new TaskResponseDTO();
+        response.setId(updated.getId());
+        response.setTitle(updated.getTitle());
+        response.setDescription(updated.getDescription());
+        response.setStatus(updated.getStatus());
 
-        return taskRepository.save(task);
+        return response;
     }
     
     public void deleteTask(Long id) {
