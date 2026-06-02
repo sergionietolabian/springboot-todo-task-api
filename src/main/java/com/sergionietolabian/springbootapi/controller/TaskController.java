@@ -18,6 +18,8 @@ import com.sergionietolabian.springbootapi.entity.Task;
 import com.sergionietolabian.springbootapi.enums.TaskStatus;
 import com.sergionietolabian.springbootapi.service.TaskService;
 
+import jakarta.validation.Valid;
+
 @RestController
 public class TaskController {
 
@@ -50,7 +52,9 @@ public class TaskController {
     }
     
     @PostMapping("/tasks")
-    public TaskResponseDTO createTask(@RequestBody TaskRequestDTO dto) {
+    public TaskResponseDTO createTask(
+            @Valid @RequestBody TaskRequestDTO dto) {
+
         return taskService.createTask(dto);
     }
     
