@@ -32,10 +32,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "user")
     private List<Task> tasks;
-
-    // getters y setters
 
     public Long getId() {
         return id;

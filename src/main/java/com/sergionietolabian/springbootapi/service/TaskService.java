@@ -61,26 +61,19 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
     
-    public TaskResponseDTO createTask(TaskRequestDTO dto) {
+    public Task createTask(Task task) {
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        String username = auth.getName();
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow();
 
-        Task task = new Task();
-        task.setTitle(dto.getTitle());
-        task.setDescription(dto.getDescription());
-        task.setStatus(dto.getStatus());
         task.setUser(user);
 
-        Task saved = taskRepository.save(task);
-
-        return TaskMapper.toResponse(saved);
+        return taskRepository.save(task);
     }
-    
     public TaskResponseDTO updateTask(Long id, TaskUpdateRequestDTO dto) {
 
         Task task = taskRepository.findById(id)

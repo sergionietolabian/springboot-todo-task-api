@@ -29,10 +29,8 @@ public class Task {
     private TaskStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
-
-    // getters y setters
 
     public Long getId() {
         return id;

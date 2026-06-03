@@ -18,6 +18,7 @@ import com.sergionietolabian.springbootapi.dto.TaskPatchRequestDTO;
 import com.sergionietolabian.springbootapi.dto.TaskRequestDTO;
 import com.sergionietolabian.springbootapi.dto.TaskResponseDTO;
 import com.sergionietolabian.springbootapi.dto.TaskUpdateRequestDTO;
+import com.sergionietolabian.springbootapi.entity.Task;
 import com.sergionietolabian.springbootapi.enums.TaskStatus;
 import com.sergionietolabian.springbootapi.service.TaskService;
 
@@ -87,7 +88,7 @@ public class TaskController {
     @ApiResponse(responseCode = "201", description = "Tarea creada correctamente")
     @ApiResponse(responseCode = "400", description = "Datos inválidos")
     @PostMapping("/tasks")
-    public TaskResponseDTO createTask(@RequestBody TaskRequestDTO dto) {
+    public Task createTask(@RequestBody Task dto) {
         return taskService.createTask(dto);
     }
     
