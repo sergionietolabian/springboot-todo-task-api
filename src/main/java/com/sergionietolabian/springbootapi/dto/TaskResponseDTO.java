@@ -12,6 +12,8 @@ public class TaskResponseDTO {
 
     private TaskStatus status;
 
+    private String username;
+    
     public Long getId() {
         return id;
     }
@@ -43,4 +45,13 @@ public class TaskResponseDTO {
     public void setStatus(TaskStatus status) {
         this.status = status;
     }
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+    
 }

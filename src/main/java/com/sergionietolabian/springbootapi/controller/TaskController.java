@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,7 +18,6 @@ import com.sergionietolabian.springbootapi.dto.TaskPatchRequestDTO;
 import com.sergionietolabian.springbootapi.dto.TaskRequestDTO;
 import com.sergionietolabian.springbootapi.dto.TaskResponseDTO;
 import com.sergionietolabian.springbootapi.dto.TaskUpdateRequestDTO;
-import com.sergionietolabian.springbootapi.entity.Task;
 import com.sergionietolabian.springbootapi.enums.TaskStatus;
 import com.sergionietolabian.springbootapi.service.TaskService;
 
@@ -87,9 +87,7 @@ public class TaskController {
     @ApiResponse(responseCode = "201", description = "Tarea creada correctamente")
     @ApiResponse(responseCode = "400", description = "Datos inválidos")
     @PostMapping("/tasks")
-    public TaskResponseDTO createTask(
-            @Valid @RequestBody TaskRequestDTO dto) {
-
+    public TaskResponseDTO createTask(@RequestBody TaskRequestDTO dto) {
         return taskService.createTask(dto);
     }
     

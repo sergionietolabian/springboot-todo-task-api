@@ -4,6 +4,8 @@ package com.sergionietolabian.springbootapi.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.sergionietolabian.springbootapi.dto.TaskPatchRequestDTO;
@@ -11,17 +13,23 @@ import com.sergionietolabian.springbootapi.dto.TaskRequestDTO;
 import com.sergionietolabian.springbootapi.dto.TaskResponseDTO;
 import com.sergionietolabian.springbootapi.dto.TaskUpdateRequestDTO;
 import com.sergionietolabian.springbootapi.entity.Task;
+import com.sergionietolabian.springbootapi.entity.User;
 import com.sergionietolabian.springbootapi.enums.TaskStatus;
 import com.sergionietolabian.springbootapi.mapper.TaskMapper;
 import com.sergionietolabian.springbootapi.repository.TaskRepository;
+import com.sergionietolabian.springbootapi.repository.UserRepository;
 
 @Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
-
-    public TaskService(TaskRepository taskRepository) {
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
+    
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository, JwtService jwtService) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
+        this.jwtService = jwtService;
     }
 
     public List<TaskResponseDTO> getAllTasks() {
@@ -55,7 +63,18 @@ public class TaskService {
     
     public TaskResponseDTO createTask(TaskRequestDTO dto) {
 
-        Task task = TaskMapper.toEntity(dto);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = auth.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Task task = new Task();
+        task.setTitle(dto.getTitle());
+        task.setDescription(dto.getDescription());
+        task.setStatus(dto.getStatus());
+        task.setUser(user);
 
         Task saved = taskRepository.save(task);
 
