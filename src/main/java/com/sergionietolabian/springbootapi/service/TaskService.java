@@ -64,7 +64,7 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
     
-    public Task createTask(Task task) {
+    public TaskResponseDTO createTask(TaskRequestDTO dto) {
 
         String username = SecurityContextHolder.getContext()
                 .getAuthentication()
@@ -73,28 +73,50 @@ public class TaskService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow();
 
+        Task task = new Task();
+        task.setTitle(dto.getTitle());
+        task.setDescription(dto.getDescription());
+        task.setStatus(TaskStatus.PENDING);
         task.setUser(user);
 
-        return taskRepository.save(task);
+        return TaskMapper.toResponse(taskRepository.save(task));
     }
+    
     public TaskResponseDTO updateTask(Long id, TaskUpdateRequestDTO dto) {
 
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found with id " + id));
+                .orElseThrow();
+
+        if (task != null && task.getUser() != null && !task.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("No tienes permiso");
+        }else if(task == null){
+            throw new RuntimeException("No existe la tarea");
+        }else if(task.getUser() == null){
+            throw new RuntimeException("No existe el usuario");
+        }
 
         task.setTitle(dto.getTitle());
         task.setDescription(dto.getDescription());
-        task.setStatus(dto.getStatus());
 
-        Task updated = taskRepository.save(task);
-
-        return TaskMapper.toResponse(updated);
+        return TaskMapper.toResponse(taskRepository.save(task));
     }
     
     public void deleteTask(Long id) {
 
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Task not found with id " + id));
+                .orElseThrow();
+
+        if (!task.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("No tienes permiso");
+        }
 
         taskRepository.delete(task);
     }
@@ -119,5 +141,17 @@ public class TaskService {
         Task updated = taskRepository.save(task);
 
         return TaskMapper.toResponse(updated);
+    }
+    
+    public List<TaskResponseDTO> getMyTasks() {
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        return taskRepository.findByUserUsername(username)
+                .stream()
+                .map(TaskMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }
