@@ -24,16 +24,19 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
-    private final JwtService jwtService;
     
-    public TaskService(TaskRepository taskRepository, UserRepository userRepository, JwtService jwtService) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
-        this.jwtService = jwtService;
     }
 
     public List<TaskResponseDTO> getAllTasks() {
-        return taskRepository.findAll()
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        return taskRepository.findByUserUsername(username)
                 .stream()
                 .map(TaskMapper::toResponse)
                 .collect(Collectors.toList());
