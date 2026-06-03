@@ -7,15 +7,18 @@ import com.sergionietolabian.springbootapi.entity.Task;
 public class TaskMapper {
 
     public static TaskResponseDTO toResponse(Task task) {
+	    TaskResponseDTO dto = new TaskResponseDTO();
 
-        TaskResponseDTO dto = new TaskResponseDTO();
+	    dto.setId(task.getId());
+	    dto.setTitle(task.getTitle());
+	    dto.setDescription(task.getDescription());
+	    dto.setStatus(task.getStatus());
 
-        dto.setId(task.getId());
-        dto.setTitle(task.getTitle());
-        dto.setDescription(task.getDescription());
-        dto.setStatus(task.getStatus());
+	    dto.setUsername(
+	        task.getUser() != null ? task.getUser().getUsername() : null
+	    );
 
-        return dto;
+	    return dto;
     }
 
     public static Task toEntity(TaskRequestDTO dto) {

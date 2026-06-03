@@ -1,5 +1,6 @@
 package com.sergionietolabian.springbootapi.dto;
 
+import com.sergionietolabian.springbootapi.entity.Task;
 import com.sergionietolabian.springbootapi.enums.TaskStatus;
 
 public class TaskResponseDTO {
@@ -52,6 +53,5 @@ public class TaskResponseDTO {
 
 	public void setUsername(String username) {
 		this.username = username;
-	}
-    
+	}    
 }
