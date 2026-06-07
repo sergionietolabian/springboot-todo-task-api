@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.sergionietolabian.springbootapi.entity.User;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -23,9 +25,11 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long expiration;
     
-    public String generateToken(String username) {
+    public String generateToken(User user) {
+
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(user.getUsername())
+                .claim("role", user.getRole().name())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(getSignKey())
@@ -67,5 +71,9 @@ public class JwtService {
 
     public Date extractExpiration(String token) {
         return extractAllClaims(token).getExpiration();
+    }
+    
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
     }
 }

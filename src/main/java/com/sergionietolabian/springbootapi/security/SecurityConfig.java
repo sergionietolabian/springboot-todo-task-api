@@ -25,9 +25,18 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().authenticated()
-                )
+                	    .requestMatchers(
+                	        "/auth/**",
+                	        "/swagger-ui/**",
+                	        "/swagger-ui.html",
+                	        "/v3/api-docs/**"
+                	    ).permitAll()
+
+                	    .requestMatchers("/admin/**").hasRole("ADMIN")
+                	    .requestMatchers("/tasks/**").hasAnyRole("USER", "ADMIN")
+
+                	    .anyRequest().authenticated()
+                	)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
