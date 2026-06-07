@@ -67,7 +67,7 @@ src/main/java/com/sergionietolabian/springbootapi
 ├── repository
 ├── security
 ├── service
-└── config
+└── swagger
 ```
 
 ---
@@ -138,7 +138,7 @@ Request:
 ```json
 {
   "username": "sergio",
-  "password": "password123"
+  "password": "1234"
 }
 ```
 
